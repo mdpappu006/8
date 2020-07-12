@@ -1,10 +1,7 @@
 <?php
-
-session_start( [
-    'cookie_lifetime' => 100,
-] );
-// session_destroy();
-
+    session_start([
+        'cookie_lifetime'=> 300,
+    ]);
 $error = false;
 $username = filter_input( INPUT_POST, 'username', FILTER_SANITIZE_STRING );
 $password = filter_input( INPUT_POST, 'password', FILTER_SANITIZE_STRING );
@@ -33,9 +30,6 @@ if ( $username && $password ) {
         }
     }
 
-
-    // die(var_dump($_POST));
-
 }
 
 if ( isset( $_GET['logout'] ) ) {
@@ -47,11 +41,9 @@ if ( isset( $_GET['logout'] ) ) {
     session_destroy();
 
     header( 'location:index.php' );
+
+
 }
-
-
-
-
 
 ?>
 
@@ -81,6 +73,13 @@ if ( isset( $_GET['logout'] ) ) {
 <div class="column column-60 column-offset-20">
 <h2>Simple Auth Example</h2>
 
+     <?php 
+        if ( $error ) {
+            echo "<blockquote>Username and Password didn't match</<blockquote>";
+        }
+
+      ?>
+
      </div>
      </div>
 
@@ -92,7 +91,9 @@ if ( isset( $_GET['logout'] ) ) {
 // echo HASH( "sha256", "rabbit" ) . "<br>";
 // echo HASH( "sha512", "rabbit" ) . "<br>";
 
-if ( isset($_SESSION['loggedin']) == true ) {
+$_SESSION['loggedin'] = 0;
+
+if ( $_SESSION['loggedin']  == true) {
     echo "Hello Admin, Welcome!";
 } else {
     echo "Hello Stranger, Login Below";
@@ -100,19 +101,16 @@ if ( isset($_SESSION['loggedin']) == true ) {
 ?>
        </div>
      </div>
-     <br/>
-     <br/>
+
+
 
      <div class="row">
         <div class="column column-60 column-offset-20">
          <?php
-if ( $error ) {
-    echo "<blockquote>Username and Password didn't match</<blockquote>";
-}
-if ( isset( $_SESSION['loggedin'] ) == false):
-?>
-</br>
-</br>
+            $_SESSION['loggedin'] = 0;
+            if ( $_SESSION['loggedin']  == false):
+        ?>
+
         <form action="auth.php" method="POST">
          <label for="username">Username</label>
          <input type="text" name="username" id="username">
@@ -127,7 +125,7 @@ if ( isset( $_SESSION['loggedin'] ) == false):
 else:
 ?>
 
-       <form action="auth.php" method="GET">
+       <form action="auth.php" method="POST">
 
          <input type="hidden" name="logout" value="1">
          <button type="submit" class="button-primary" name="submit">Log Out</button>
@@ -135,7 +133,7 @@ else:
         </form>
 
        <?php
-endif;
+    endif;
 ?>
 
        </div>
